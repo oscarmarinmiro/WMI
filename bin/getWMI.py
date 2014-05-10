@@ -2,12 +2,37 @@ __author__ = 'Oscar'
 
 import pprint
 import re
-
-#from pattern.text.en import parse, parsetree
+import math
 
 from getESMock import getCountFromWords, getTweetsFromWords
 
+TOP_WORDS = 100
+
+def getStopWords():
+
+    FILE_IN = "../data/stopwords.txt"
+
+    fileIn = open(FILE_IN,"rb")
+
+    for line in fileIn:
+        myWords = line.decode("utf8").split(", ")
+
+    return myWords
+
+def normalizeTokens(myDict):
+
+    myList = []
+
+    topKeys = sorted(myDict.keys(), key = lambda key: myDict[key], reverse=True)[:TOP_WORDS]
+
+    for key in topKeys:
+        myList.append({'word': key, 'count': myDict[key]})
+
+    return myList
+
 def getWMIData(wordOne, wordTwo, lang):
+
+    myWords = getStopWords()
 
     wordOneTweets = getTweetsFromWords(wordOne, lang)
 
@@ -17,21 +42,52 @@ def getWMIData(wordOne, wordTwo, lang):
 
     twoTexts = [tweet['text'] for tweet in wordTwoTweets]
 
-    return (oneTexts, twoTexts)
+    myTokensOne = normalizeTokens(getTokensFromTexts(oneTexts, myWords,wordOne))
 
-def getTokensFromTexts(texts):
+    myTokensTwo = normalizeTokens(getTokensFromTexts(twoTexts, myWords,wordTwo))
+
+
+    finalDict = myTokensOne + myTokensTwo
+
+    finalTokens = {}
+
+    for entry in finalDict:
+        finalTokens[entry['word']] = {}
+
+    for key in finalTokens:
+        finalTokens[key]['first'] = getCountFromWords([key,wordOne], "en")
+        finalTokens[key]['second'] = getCountFromWords([key,wordTwo], "en")
+        finalTokens[key]['all'] = getCountFromWords([key], "en")
+        finalTokens[key]['firstPMI'] = math.log(finalTokens[key]['first']) - math.log(finalTokens[key]['all'])
+        finalTokens[key]['secondPMI'] = math.log(finalTokens[key]['second']) - math.log(finalTokens[key]['all'])
+
+    #pprint.pprint(finalTokens)
+
+    finalStruct = []
+
+    for key in finalTokens:
+        finalStruct.append({'word': key, 'xPMI': finalTokens[key]['firstPMI'], 'yPMI': finalTokens[key]['secondPMI']})
+
+    pprint.pprint(finalStruct)
+
+    return
+
+def getTokensFromTexts(texts,myWords,origWord):
+
+    tokenCounts = {}
 
     for text in texts:
         tokens = re.split('[\s\.\,\;\']+',text)
-        pprint.pprint(tokens)
+        for token in tokens:
+            token = token.lower()
+            if token not in myWords and len(token)> 2 and token != origWord.lower():
+                if token not in tokenCounts:
+                    tokenCounts[token] = 0
+                tokenCounts[token] +=1
+    return tokenCounts
 
 
 
-(firstTexts, secondTexts) = getWMIData("geek","hipster","es")
-
-# pprint.pprint(firstTexts)
-# pprint.pprint(secondTexts)
+getWMIData("geek","hipster","en")
 
 
-getTokensFromTexts(firstTexts)
-getTokensFromTexts(secondTexts)
