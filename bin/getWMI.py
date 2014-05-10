@@ -34,7 +34,11 @@ def getWMIData(wordOne, wordTwo, lang):
 
     myWords = getStopWords()
 
+    print "1"
+
     wordOneTweets = getTweetsFromWords(wordOne, lang)
+
+    print "2"
 
     oneTexts = [tweet['text'] for tweet in wordOneTweets]
 
@@ -58,8 +62,8 @@ def getWMIData(wordOne, wordTwo, lang):
         finalTokens[key]['first'] = getCountFromWords([key,wordOne], "en")
         finalTokens[key]['second'] = getCountFromWords([key,wordTwo], "en")
         finalTokens[key]['all'] = getCountFromWords([key], "en")
-        finalTokens[key]['firstPMI'] = math.log(finalTokens[key]['first']) - math.log(finalTokens[key]['all'])
-        finalTokens[key]['secondPMI'] = math.log(finalTokens[key]['second']) - math.log(finalTokens[key]['all'])
+        finalTokens[key]['firstPMI'] = math.log(finalTokens[key]['first']+1) - math.log(finalTokens[key]['all']+1)
+        finalTokens[key]['secondPMI'] = math.log(finalTokens[key]['second']+1) - math.log(finalTokens[key]['all']+1)
 
     #pprint.pprint(finalTokens)
 
