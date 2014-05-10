@@ -10,7 +10,7 @@ def getTweetsFromWords(words,lang="en",maxDocs=100,index="twitter_river"):
     
     results = list()
 
-    url = "http://assets.outliers.es/es/twitter_river/_search?q=text%3Ahola+AND+lang%3A"+lang+"&fields=text"
+    url = "http://assets.outliers.es/es/twitter_river/_search?q=text%3A"+words+"AND+lang%3A"+lang+"&fields=text"
     res = requests.get(url)
 
     data = json.loads(res.text)['hits']['hits']
@@ -39,10 +39,11 @@ def getCountFromWords(words, lang="en", index="twitter_river"):
     query = " AND ".join(words)
     url = "http://assets.outliers.es/es/twitter_river/_search?q="+query+"+AND+lang%3A"+lang+"&fields=text"
     res = requests.get(url)
-
-    count = json.loads(res.text)['hits']['total']
+    print res
+    data = json.loads(res.text)
+    print data
     #es = Elasticsearch([{'host':'tesla','port':9200}])
 
     #res = es.search(index=index,q="text:"+" AND ".join(words)+" AND lang:"+lang,fields="")
 
-    return count
+    return data['hits']['total']
