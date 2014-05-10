@@ -4,7 +4,7 @@ import pprint
 import re
 import math
 
-from getESMock import getCountFromWords, getTweetsFromWords
+from getES import getCountFromWords, getTweetsFromWords
 
 TOP_WORDS = 100
 
@@ -42,9 +42,9 @@ def getWMIData(wordOne, wordTwo, lang):
 
     twoTexts = [tweet['text'] for tweet in wordTwoTweets]
 
-    myTokensOne = normalizeTokens(getTokensFromTexts(oneTexts, myWords,wordOne))
+    myTokensOne = normalizeTokens(getTokensFromTexts(oneTexts, myWords,wordOne,wordTwo))
 
-    myTokensTwo = normalizeTokens(getTokensFromTexts(twoTexts, myWords,wordTwo))
+    myTokensTwo = normalizeTokens(getTokensFromTexts(twoTexts, myWords,wordTwo,wordTwo))
 
 
     finalDict = myTokensOne + myTokensTwo
@@ -72,7 +72,7 @@ def getWMIData(wordOne, wordTwo, lang):
 
     return
 
-def getTokensFromTexts(texts,myWords,origWord):
+def getTokensFromTexts(texts,myWords,origWord, origWordTwo):
 
     tokenCounts = {}
 
@@ -80,7 +80,7 @@ def getTokensFromTexts(texts,myWords,origWord):
         tokens = re.split('[\s\.\,\;\']+',text)
         for token in tokens:
             token = token.lower()
-            if token not in myWords and len(token)> 2 and token != origWord.lower():
+            if token not in myWords and len(token)> 2 and token != origWord.lower() and token != origWord.lower():
                 if token not in tokenCounts:
                     tokenCounts[token] = 0
                 tokenCounts[token] +=1
