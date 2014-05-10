@@ -3,9 +3,9 @@ __author__ = 'Oscar'
 import random
 import pprint
 
-geekText = "I'm a geek. I love iphone, star wars, comic and computers"
+geekText = "I'm a geek. I love iphone, star wars, comic and computers #hate"
 
-hipsterText = "I'm a hipster. I love iphone, fixies and beards"
+hipsterText = "I'm a hipster. I love iphone, fixies and beards.#love"
 
 def getTweetsFromWords(words,lang):
 

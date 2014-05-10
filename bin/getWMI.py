@@ -1,8 +1,9 @@
 __author__ = 'Oscar'
 
 import pprint
+import re
 
-from pattern.text.en import parse
+#from pattern.text.en import parse, parsetree
 
 from getESMock import getCountFromWords, getTweetsFromWords
 
@@ -21,18 +22,16 @@ def getWMIData(wordOne, wordTwo, lang):
 def getTokensFromTexts(texts):
 
     for text in texts:
-        result = parse(text,
-   tokenize = True,
-       tags = False,
-     chunks = False,         # Parse chunks? (NP, VP, PNP, ...)
-  relations = False,        # Parse chunk relations? (-SBJ, -OBJ, ...)
-    lemmata = False,
-   encoding = 'utf-8',       # Input string encoding.
-     tagset = None)
+        tokens = re.split('[\s\.\,\;\']+',text)
+        pprint.pprint(tokens)
 
 
 
 (firstTexts, secondTexts) = getWMIData("geek","hipster","es")
 
-pprint.pprint(firstTexts)
-pprint.pprint(secondTexts)
+# pprint.pprint(firstTexts)
+# pprint.pprint(secondTexts)
+
+
+getTokensFromTexts(firstTexts)
+getTokensFromTexts(secondTexts)
