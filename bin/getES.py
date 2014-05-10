@@ -5,12 +5,17 @@ from elasticsearch import Elasticsearch
 import time
 
 def getTweetsFromWords(words,lang="en",maxDocs=100,index="twitter_river"):
-    es = Elasticsearch([{'host':'tesla','port':9200}])
-    res = es.search(index="twitter_river",q="text:"+words+" AND lang:"+lang,fields="text")
+    
     results = list()
-    for hit in res['hits']['hits']:
-        results.append(hit['fields']['text'])
 
+    es = Elasticsearch([{'host':'tesla','port':9200}])
+  
+    res = es.search(index=index,q="text:"+words+" AND lang:"+lang,fields="text")
+
+    for hit in res['hits']['hits']:
+        results.append(hit['fields'])
+
+    
     return results
 
 
