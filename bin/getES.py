@@ -6,21 +6,44 @@ import time
 import requests
 import json
 import pprint
+import sys
+
+PAGE_SIZE = 100000
+
+def getTotalDocs(lang="en"):
+
+    url = "http://assets.outliers.es/es/twitter_river/_search"
+
+    params = {'q': "lang="+lang}
+
+    res = requests.get(url, params = params)
+
+    return res.json()['hits']['total']
+
+
+
 
 def getTweetsFromWords(words,lang="en",maxDocs=100,index="twitter_river"):
     
     results = list()
 
-    url = "http://assets.outliers.es/es/twitter_river/_search?q=text%3A"+words+"AND+lang%3A"+lang+"&fields=text"
-    res = requests.get(url)
+    url = "http://assets.outliers.es/es/twitter_river/_search"
+
+    params = {'q': "text:"+ words + " AND lang="+lang, 'fields':"text", "size": PAGE_SIZE}
+
+    res = requests.get(url, params = params)
 
     data = json.loads(res.text)['hits']['hits']
+
+    myCount = json.loads(res.text)['hits']['total']
 
     print data
 
     for entry in data:
         print entry
         results.append(entry['fields'])
+
+    print "LONGITUD: %d" %  len(results)
 
     #es = Elasticsearch([{'host':'assets.outliers.es/es','port':80}])
   
@@ -32,7 +55,7 @@ def getTweetsFromWords(words,lang="en",maxDocs=100,index="twitter_river"):
     #    results.append(hit['fields'])
 
     
-    return results
+    return results,myCount
 
 
 def getCountFromWords(words, lang="en", index="twitter_river"):
